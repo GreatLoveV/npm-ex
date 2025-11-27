@@ -1,0 +1,24 @@
+{
+  "name": "npm-ex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"   
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/GreatLoveV/npm-ex.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GreatLoveV/npm-ex/issues"
+  },
+  "homepage": "https://github.com/GreatLoveV/npm-ex#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
