@@ -23,7 +23,10 @@ let notes = [
 ]
 
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World</>')
+    response.send(`
+        <h1>Welcome to your phonebook</h1>
+        <p1>/api/notes on the same port to see all your contacts</p1>s
+        `)
 })
 
 app.get('/api/notes', (request, response)=>{
