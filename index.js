@@ -1,76 +1,57 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors')
+const Note = require('./models/note')
+
 
 const app = express()
-app.use(express.static('dist'))
-app.use(cors())
+let notes = []
+
+const requestLogger = (req, res, next)=>{
+    console.log('Method: ', req.method)
+    console.log('Path:  ', req.path)
+    console.log('Body:  ', req.body)
+    console.log('---', )
+    next()
+}
 app.use(express.json())
+app.use(requestLogger)
+app.use(express.static('dist'))
 app.use(morgan('tiny'))
 
-let notes = [  
-    {   
-        id: "1",
-        content: "HTML is easy",    
-        important: true  
-    },  
-    {    
-        id: "2",
-        content: "Browser can execute only JavaScript",    
-        important: false  
-    },  
-    {    
-        id: "3",    
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true  
-    }
-]
 
 app.get('/', (req, res) => {
     res.send(`
-        <h1>Welcome to your phonebook</h1>
-        <p1>/api/notes on the same port to see all your contacts</p1>
+        <h1>Welcome to your notes</h1>
+        <p1>/api/notes on the same port to see all your notes</p1>
         `)
 })
 
 app.get('/api/notes', (req, res)=>{
-    res.json(notes)
+    Note.find({}).then(notes=>{
+        res.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (req, res)=>{
-    const id = req.params.id
-    const note = notes.find(note => note.id === id)
-
-    if (note) {
+    Note.findById(req.params.id).then(note => {
         res.json(note)
-    } else {
-        res.statusMessage = "Current id doesn't exist";
-        res.status(404).end()
-    }
+    })
 })
 
-const generateId = ()=>{
-    const maxId = notes.length > 0
-        ? Math.max(...notes.map(n=> Number(n.id)))
-        : 0
-    return String(maxId + 1 )
-}
 
 app.post('/api/notes', (req, res) => {
     const body = req.body
     if (!body.content){
-        return res.status(400).json({
-                error: 'content is missing'
-            })
+        return res.status(400).json({error: 'content is missing'})
     }
-    const note = {
+    const note = new Note({
         content: body.content,
         important: body.important || false,
-        id: generateId()
-    }
-    notes.concat(note)
-    
-    res.json(note)
+    })
+    note.save().then(savedNote => {
+        res.json(savedNote)
+    })
 })
 
 app.delete('/api/notes/:id', (req, res)=>{
@@ -79,7 +60,11 @@ app.delete('/api/notes/:id', (req, res)=>{
     res.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const unknownEndpoint = (req, res) => {
+    res.status(400).send({error: 'unknown endpoint'})
+}
+
+const PORT = process.env.PORT 
 app.listen(PORT , ()=>{
     console.log(`Server running on port ${PORT}`)
 })
