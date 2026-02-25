@@ -10,7 +10,8 @@
     "build:ui": "rm -rf dist && cd ../../part-2/FSO-notes && npm run build && cp -r dist ../../part-3/npm-ex",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "start:test": "cross-env NODE_ENV=test node --watch index.js"
   },
   "repository": {
     "type": "git",
